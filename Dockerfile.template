@@ -1,0 +1,69 @@
+FROM resin/%%RESIN_MACHINE_NAME%%-python:2.7
+
+#switch on systemd init system in container
+ENV INITSYSTEM on
+
+#install requirements
+RUN apt-get update \
+    && apt-get install -y -q build-essential --no-install-recommends \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+## Install MRAA and UPM
+    RUN apt-get update && \
+        apt-get install -q -y \
+          build-essential \
+          automake \
+          cmake \
+          git \
+          byacc \
+          libpcre++-dev \
+        && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+    # Can use tag or commit hash to set SWIGERSION
+    ENV SWIGVERSION rel-3.0.10
+    RUN git clone https://github.com/swig/swig.git && \
+        cd swig && \
+        git checkout -b build ${SWIGVERSION} && \
+        ./autogen.sh && \
+        ./configure && \
+        make && \
+        make install && \
+        cd .. && rm -rf swig
+
+    # Can use tag or commit hash to set MRAAVERSION
+    ENV MRAAVERSION v1.5.1
+    RUN git clone https://github.com/intel-iot-devkit/mraa.git && \
+        cd mraa && \
+        git checkout -b build ${MRAACOMMIT} && \
+        mkdir build && \
+        cd build && \
+        cmake .. -DSWIG_DIR=`swig -swiglib` \
+          -DBUILDSWIGPYTHON=ON -DBUILDSWIGNODE=OFF -DBUILDSWIGJAVA=OFF && \
+        make && \
+        make install && \
+        cd ../.. && rm -rf mraa
+
+    # Can use tag or commit hash to set UPMVERSION
+    # PATCHED FOR BUG IN GCC 4.9.2
+    ENV UPMVERSION v1.0.2
+    RUN git clone https://github.com/intel-iot-devkit/upm.git && \
+        cd upm && \
+        git checkout -b build ${UPMCOMMIT} && \
+        sed -i -e 's/-march=native/-march=armv7/g' CMakeLists.txt &&  \
+        mkdir build && \
+        cd build && \
+        cmake .. -DSWIG_DIR=`swig -swiglib` \
+          -DBUILDSWIGPYTHON=ON -DBUILDSWIGNODE=OFF -DBUILDSWIGJAVA=OFF && \
+        make && \
+        make install && \
+        cd ../.. && rm -rf upm
+
+# pip install python deps from requirements.txt
+# For caching until requirements.txt changes
+COPY ./requirements.txt /requirements.txt
+RUN pip install -r /requirements.txt
+
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+
+CMD ["bash","start.sh"]

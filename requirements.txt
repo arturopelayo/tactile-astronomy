@@ -1,2 +1,2 @@
-alsaaudio
+pyalsaaudio
 soundfile

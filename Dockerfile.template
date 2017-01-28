@@ -90,7 +90,7 @@ RUN apt-get update \
 
 # Required for bluez-alsa
 RUN apt-get update \
-    && apt-get install -y -q libsbc-dev libortp-dev bluez libbluetooth-dev --no-install-recommends \
+    && apt-get install -y -q libbsd-dev libsbc-dev libortp-dev bluez libbluetooth-dev --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # BLUEZ-ALSA

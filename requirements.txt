@@ -2,3 +2,4 @@ pyalsaaudio
 soundfile
 pyaudio
 numpy
+evdev

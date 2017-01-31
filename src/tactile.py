@@ -12,6 +12,8 @@ import threading
 import logging
 import sys
 
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 
@@ -39,6 +41,7 @@ class MainThread(threading.Thread):
         mail = self._mailbox.get_all()
         for msg in mail:
             if msg['namespace'] == 'nfc.tagchange':
+                print msg
                 self.eventhub.emit('io.beep', duration=0.5)
 
     def run(self):
@@ -60,9 +63,15 @@ def handle_keyevents(eventhub):
                 elif event.keycode == "KEY_S":
                     eventhub.emit('io.vibration', duration=0.5)
                 elif event.keycode == "KEY_D":
-                    eventhub.emit('io.vibration', duration=1.0)
+                    eventhub.emit('audio.narration.pause', duration=0.5)
                 elif event.keycode == "KEY_F":
-                    eventhub.emit('io.vibration', duration=0.1)
+                    eventhub.emit('audio.narration.stop', duration=0.5)
+                elif event.keycode == "KEY_G":
+                    song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'ACDC_-_Back_In_Black-sample.ogg')
+                    eventhub.emit('audio.narration.play', path=song)
+                elif event.keycode == "KEY_H":
+                    song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'Coldplay_-_The_Scientist.ogg')
+                    eventhub.emit('audio.narration.play', path=song)
 
 def main():
     eventhub = EventHub()
@@ -70,7 +79,7 @@ def main():
     threads['io'] = IOThread(eventhub)
     threads['main'] = MainThread(eventhub)
     threads['nfc'] = NFCThread(eventhub)
-    #threads['audio'] = AudioThread(eventhub)
+    threads['audio'] = AudioThread(eventhub)
 
     for name in threads:
         threads[name].start()

@@ -1,6 +1,7 @@
 
 import threading
 import time
+import logging
 
 from audiofile import AudioFile
 
@@ -80,7 +81,7 @@ class AudioThread(threading.Thread):
                     voicedata += [data]
 
             if len(voicedata) == 0:
-                time.sleep(0.2)
+                time.sleep(0.3)
             else:
                 combined = mixer.mixdown(voicedata)
                 speaker.write(combined.tostring())

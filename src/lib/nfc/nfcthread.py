@@ -25,7 +25,7 @@ class NFCThread(threading.Thread):
                 if tag.uid != last_id:
                     self.eventhub.emit('nfc.tagchange', uid=tag.uid)
                     last_id = tag.uid
-                time.sleep(0.5)
+                time.sleep(0.1)
             except Exception as err:
                 logging.exception('NFCThread')
                 time.sleep(1)

@@ -6,11 +6,13 @@ from select import select
 from lib.eventhub import EventHub
 from lib.io import IOThread
 from lib.nfc import NFCThread
-#from lib.audio import AudioThread
+from lib.audio import AudioThread
 
 import threading
 import logging
 import sys
+import os
+import time
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -47,6 +49,7 @@ class MainThread(threading.Thread):
     def run(self):
         while self.running:
             self.process_events()
+            time.sleep(0.1)
 
 def handle_keyevents(eventhub):
     devices = map(evdev.InputDevice, evdev.list_devices())

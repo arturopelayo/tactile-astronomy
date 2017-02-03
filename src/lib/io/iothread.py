@@ -33,7 +33,7 @@ class IOThread(threading.Thread):
                 # process mail
                 self.beep.process_events()
                 self.vibe.process_events()
-                time.sleep(0.05)
+                time.sleep(0.1)
             except Exception as err:
                 logging.exception('IOThread')
                 time.sleep(1)

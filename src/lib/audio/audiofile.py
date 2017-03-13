@@ -1,5 +1,6 @@
-
 from soundfile import SoundFile
+
+# the job of this is to stream whatever source we have
 
 class AudioFile(SoundFile):
     def __init__(self, path):

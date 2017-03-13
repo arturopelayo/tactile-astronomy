@@ -31,6 +31,12 @@ class MainThread(threading.Thread):
         self.eventhub = eventhub
         self.daemon = True
         self.running = False
+        SOUND_DIR = os.path.join(BASE_DIR, '..', 'tests', 'sound')
+        self.database = {
+            #'04bc104a853280': "https://upload.wikimedia.org/wikipedia/en/4/42/Michael_Jackson_-_Earth_Song.ogg"
+            '04bc104a853280': os.path.join(SOUND_DIR, 'ACDC_-_Back_In_Black-sample.ogg'),
+            '04676aa2173c80': os.path.join(SOUND_DIR, 'Sample_of_"Another_Day_in_Paradise".ogg'),
+        }
 
         self._mailbox = eventhub.subscribe(['nfc.tagchange'])
 
@@ -44,7 +50,10 @@ class MainThread(threading.Thread):
         for msg in mail:
             if msg['namespace'] == 'nfc.tagchange':
                 print msg
-                self.eventhub.emit('io.beep', duration=0.5)
+                sound = self.database.get(msg.get('uid'))
+                if sound:
+                    self.eventhub.emit('audio.narration.play', path=sound)
+                self.eventhub.emit('io.beep', duration=0.1)
 
     def run(self):
         while self.running:
@@ -61,20 +70,21 @@ def handle_keyevents(eventhub):
                 if event.type != ecodes.EV_KEY:
                     continue
                 event = evdev.KeyEvent(event)
-                if event.keycode == "KEY_A":
-                    eventhub.emit('io.beep', duration=0.5)
-                elif event.keycode == "KEY_S":
-                    eventhub.emit('io.vibration', duration=0.5)
-                elif event.keycode == "KEY_D":
-                    eventhub.emit('audio.narration.pause', duration=0.5)
-                elif event.keycode == "KEY_F":
-                    eventhub.emit('audio.narration.stop', duration=0.5)
-                elif event.keycode == "KEY_G":
-                    song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'ACDC_-_Back_In_Black-sample.ogg')
-                    eventhub.emit('audio.narration.play', path=song)
-                elif event.keycode == "KEY_H":
-                    song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'Coldplay_-_The_Scientist.ogg')
-                    eventhub.emit('audio.narration.play', path=song)
+                if event.keystate == evdev.KeyEvent.key_down:
+                    if event.keycode == "KEY_A":
+                        eventhub.emit('io.beep', duration=0.1)
+                    elif event.keycode == "KEY_S":
+                        eventhub.emit('io.vibration', duration=0.1)
+                    elif event.keycode == "KEY_D":
+                        eventhub.emit('audio.narration.pause', duration=0.5)
+                    elif event.keycode == "KEY_F":
+                        eventhub.emit('audio.narration.stop', duration=0.5)
+                    elif event.keycode == "KEY_G":
+                        song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'ACDC_-_Back_In_Black-sample.ogg')
+                        eventhub.emit('audio.narration.play', path=song)
+                    elif event.keycode == "KEY_H":
+                        song = os.path.join(BASE_DIR, '..', 'tests', 'sound', 'Coldplay_-_The_Scientist.ogg')
+                        eventhub.emit('audio.narration.play', path=song)
 
 def main():
     eventhub = EventHub()

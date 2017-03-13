@@ -3,11 +3,11 @@ import threading
 import time
 import logging
 
+import alsaaudio
+
 from audiofile import AudioFile
-
-import pyaudio
-
 from audiomixer import AudioMixer
+
 
 class AudioThread(threading.Thread):
     def __init__(self, eventhub):
@@ -61,13 +61,15 @@ class AudioThread(threading.Thread):
 
     def run(self):
         # open stream (2)
-        p = pyaudio.PyAudio()
-        speaker = p.open(format=pyaudio.paInt16,
-                         channels=2,
-                         rate=44100,
-                         output=True)
         mixer = AudioMixer()
-        CHUNK = 1024
+        CHUNK = 2048
+
+        speaker = alsaaudio.PCM()
+        speaker.setchannels(2)
+        speaker.setrate(44100)
+        speaker.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+        speaker.setperiodsize(CHUNK)
+
         while self.running:
             # read events
             self.process_events()

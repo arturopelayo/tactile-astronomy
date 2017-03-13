@@ -1365,4 +1365,3 @@ nfc_emulator = struct_nfc_emulator # /usr/include/nfc/nfc-emulation.h: 43
 nfc_emulation_state_machine = struct_nfc_emulation_state_machine # /usr/include/nfc/nfc-emulation.h: 53
 
 # No inserted files
-

@@ -29,6 +29,8 @@ try:
         gpio["led2_green"].write(gpio["aux_btn1"].read())
         gpio["led2_blue"].write(gpio["aux_btn2"].read())
         time.sleep(0.1)
+except KeyboardInterrupt:
+    pass
 finally:
     for io in gpio.values():
         io.close()

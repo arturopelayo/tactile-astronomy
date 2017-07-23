@@ -1,0 +1,107 @@
+
+
+GET /ntag/<id>/
+{
+  "id": 1,
+  "name": "Name of object",
+  "name_audio": "http://static.url/name.ogg",
+  "content": "This is the content to do blah blah blah",
+  "content_audio": "http://static.url/content.ogg",
+  "menu": {
+    "A": {
+      "name": "Text",
+      "name_audio": "http://static.url/subname.ogg",
+      "content": "Text",
+      "content_audio": "http://static.url/subncontent.ogg",
+    },
+    "B": {
+      "name": "Text",
+      "name_audio": "http://static.url/subname.ogg",
+      "content": "Text",
+      "content_audio": "http://static.url/subncontent.ogg",
+    },
+    "C": {
+      "name": "Text",
+      "name_audio": "http://static.url/subname.ogg",
+      "content": "Text",
+      "content_audio": "http://static.url/subncontent.ogg",
+    },
+    "D": {
+      "name": "Text",
+      "name_audio": "http://static.url/subname.ogg",
+      "content": "Text",
+      "content_audio": "http://static.url/subncontent.ogg",
+    }
+  }
+}
+
+object {
+  id INTEGER
+  name TEXT
+  name_audio FILEPATH
+}
+
+menu {
+  id INTEGER
+  object_id INTEGER
+  button_name CHAR "A"
+  subname TEXT
+  subname_audio FILEPATH
+  subcontent FILEPATH
+}
+
+
+<Startup sound>
+Welcome to Tactile Astronomy
+Please scan an object
+<Scan sound>
+You have scanned <object name>
+<object content>
+<Seperate menu sound>
+Main menu
+For <subname> press <button>
+<Shutdown sound>
+
+
+audio.system, local://sound_startup.ogg
+audio.narration, local://speech_welcome.ogg
+audio.narration, local://speech_pleasescan.ogg
+<wait for scan event>
+audio.system, local://sound_scan.ogg
+<retrieve sounds>
+audio.narration, local://speech_youhavescanned.ogg
+audio.narration, remote://object_name.ogg
+audio.narration, remote://object_content.ogg
+audio.system, local://sound_menu.ogg
+audio.narration, local://speech_for.ogg
+audio.narration, remote://object_name.ogg
+audio.narration, local://speech_pressA.ogg
+audio.narration, remote://object_submenuA_name.ogg
+<wait for scan event or button push>
+audio.narration, remote://object_submenuA_name.ogg
+audio.narration, remote://object_submenuA_content.ogg
+<back to menu>
+
+
+
+<Pause sound>
+<Play sound>
+<Rewind sound>
+<Skip sound>
+
+
+<Startup sound>
+Welcome to Tactile Astronomy
+To add an object press A
+To link an existing object press B
+
+Adding object
+In a few words, what is the object?
+Describe the object then press A to confirm, B to redo, D to restart
+Menu adding? Yes = A, No = B
+Give the submenu a title press A to confirm, B to redo, D to restart
+Content press A, B
+Are you done? Yes = A, No = B
+Scan code for object
+<Scan sound>
+Object <object name> added to database

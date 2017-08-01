@@ -1,3 +1,4 @@
-#resin.io + python + raspberry pi camera module
+# Tactile Astronomy
+Teaching blind people about astronomy using 3d printing
 
-This is a simple app that demonstrates how to get started with the raspberry pi camera module. All it does is snap one photo and then stores it in the /data directory on the pi.
+A prototype for new ways of interactive learning which focuses on using touch and sound instead of sight.
